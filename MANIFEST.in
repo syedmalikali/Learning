@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include bismi *.css
+recursive-include bismi *.csv
+recursive-include bismi *.html
+recursive-include bismi *.ico
+recursive-include bismi *.js
+recursive-include bismi *.json
+recursive-include bismi *.md
+recursive-include bismi *.png
+recursive-include bismi *.py
+recursive-include bismi *.svg
+recursive-include bismi *.txt
+recursive-exclude bismi *.pyc
