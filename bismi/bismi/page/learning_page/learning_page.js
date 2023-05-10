@@ -11,60 +11,17 @@ PageContent = Class.extend({
 		this.make()
 	},
 	make: function () {
-		let htmlcontent = `
-		<div class="container">
-		<div class="row">
-			<div class="col-md-4">
-				<div class="card" style="width: 18rem;">
-				<div class="d-flex justify-content-between">
-				<div class="card-header">
-				  Total Sales(This Month)
-				</div>
-				<div class="card-actions dropdown pull-right">
-				  <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					...
-				  </a>
-				  <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-					<li class="dropdown-item">
-					  <a data-action="action-refresh">Refresh</a>
-					</li>
-					<li class="dropdown-item">
-					  <a data-action="action-edit">Edit</a>
-					</li>
-				  </ul>
-				</div>
-			  </div>
-					<div class="card-body" style="padding:0.25rem">
-						<table class="table table-bordered border-primary" style="padding:0.25rem;margin:5px;">
-							<tr>
-								<th id="branch"></th>
-								<th style="text-align:right"><span id="net-total"> </span>
-							</tr>
-							<tr>
-								<th>Khobar</th>
-								<th><span id="grand-total"> </span>
-							</tr>
-						</table>
-	
-					</div>
-	
-				</div>
-	
-			</div>
-		</div>
-	</div>
-
-
-
-		`;
 
 		let item_count = function () {
 			frappe.call({
 				method: "bismi.bismi.page.learning_page.learning_page.get_item_count",
 				callback: function (item_count) {
 					console.log(item_count.message[0][0])
-					$("#branch").text(item_count.message[0].branch)
-					$("#net-total").text(item_count.message[0].net_total)
+					$("#kbranch").text(item_count.message[0].branch)
+					$("#knet-total").text(item_count.message[0].net_total)
+					$("#rbranch").text(item_count.message[1].branch)
+					$("#rnet-total").text(item_count.message[1].net_total)
+
 					$("#grand-total").text(item_count.message[0].grand_total)
 				}
 
@@ -72,7 +29,7 @@ PageContent = Class.extend({
 		}
 
 
-		$(frappe.render_template(htmlcontent, this)).appendTo(this.page.main)
+		$(frappe.render_template("learning_page",{})).appendTo(this.page.main)
 		item_count()
 	}
 });
