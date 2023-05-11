@@ -1,12 +1,8 @@
-frappe.pages['learning-chart-page'].on_page_load = function(wrapper) {
-
-
-
-
+frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 	var page = frappe.ui.make_app_page({
-			parent: wrapper,
-			title: 'Project Charts',
-			single_column: true
+		parent: wrapper,
+		title: 'Project Charts',
+		single_column: true
 	});
 
 
@@ -14,45 +10,44 @@ frappe.pages['learning-chart-page'].on_page_load = function(wrapper) {
 	wrapper.append(`
 					<div id="my_chart"></div>
 			`);
+	frappe.call({
+		method: "bismi.bismi.page.learning_page.learning_page.get_item_group_values",
+		callback: function (r) {
+			var item_group_values = r.message;
+			var labels = [], values = [];
+			
+			$.each(item_group_values, function (i, item_group) {
+				labels.push(item_group.item_group);
+				values.push(item_group.value);
+			});
+			
+			var chart_data = {
+				labels: labels,
+				datasets: [
+					{
+						name: __("Values"),
+						values: values
+					}
+				]
+			};
 
-let chart = new frappe.Chart( "#my_chart", { // or DOM element
-	data: {
-	labels: ["12am-3am", "3am-6am", "6am-9am", "9am-12pm",
-			"12pm-3pm", "3pm-6pm", "6pm-9pm", "9pm-12am"],
+			let chart = new frappe.Chart("#my_chart", { // or DOM element
+				data: chart_data,
 
-	datasets: [
-			{
-					name: "Some Data", chartType: 'bar',
-					values: [25, 40, 30, 35, 8, 52, 17, 4]
-			},
-			{
-					name: "Another Set", chartType: 'bar',
-					values: [25, 50, 10, 15, 18, 32, 27, 14]
-			},
-			{
-					name: "Yet Another", chartType: 'line',
-					values: [15, 20, 3, 15, 58, 12, 17, 37]
-			}
-	],
+				title: "My Awesome Chart",
+				type: 'bar', //'axis-mixed', // or 'bar', 'line', 'pie', 'percentage'
+				height: 300,
+				colors: ['purple', '#ffa3ef', 'light-blue'],
 
-	yMarkers: [{ label: "Marker", value: 70,
-			options: { labelPos: 'left' }}],
-	yRegions: [{ label: "Region", start: -10, end: 50,
-			options: { labelPos: 'right' }}]
-	},
+				tooltipOptions: {
+					formatTooltipX: d => (d + '').toUpperCase(),
+					formatTooltipY: d => d + ' pts',
+				}
+			});
 
-	title: "My Awesome Chart",
-	type: 'axis-mixed', // or 'bar', 'line', 'pie', 'percentage'
-	height: 300,
-	colors: ['purple', '#ffa3ef', 'light-blue'],
+			// chart.export();
 
-	tooltipOptions: {
-			formatTooltipX: d => (d + '').toUpperCase(),
-			formatTooltipY: d => d + ' pts',
-	}
-});
-
-// chart.export();
-
-//setTimeout(function () { my_chart.refresh()}, 1);
+			//setTimeout(function () { my_chart.refresh()}, 1);
+		}
+	});
 }

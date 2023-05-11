@@ -1,55 +1,100 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card" style="width: 18rem;">
-                <div class="d-flex justify-content-between">
-                    <div class="card-header">
-                        Total Sales(This Month)
-                    </div>
+frappe.pages['learning-chart-page'].on_page_load = function(wrapper) {
+    var page = frappe.ui.make_app_page({
+        parent: wrapper,
+        title: __('Item Group Values'),
+        single_column: true
+    });
 
-                </div>
-                <div class="card-body" style="padding:0.25rem">
-                    <table class="table table-bordered border-primary" style="padding:0.25rem;margin:5px;">
-                        <tr>
-                            <th id="branch"></th>
-                            <th style="text-align:right"><span id="net-total"> </span>
-                        </tr>
-                        <tr>
-                            <th>Khobar</th>
-                            <th><span id="grand-total"> </span>
-                        </tr>
-                    </table>
+    var chart_wrapper = $(`<div class="chart-wrapper" style="height: 300px;"></div>`).appendTo(page.main);
 
-                </div>
+    let chart = new frappe.Chart( "#my_chart", { 	// or DOM element
+        frappe.call({
+            method: "bismi.bismi.page.learning_page.learning_page.get_item_group_values",
+            callback: function (r) {
+                var item_group_values = r.message;
+                var labels = [], values = [];
 
-            </div>
-        
-        </div>
-    </div>
-    
-</div>
+                $.each(item_group_values, function (i, item_group) {
+                    labels.push(item_group.item_group);
+                    values.push(item_group.value);
+                });
+
+                var data = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            name: __("Values"),
+                            values: values
+                        }
+                    ]
+                };
+
+                var chart = new Chart(chart_wrapper[0], {
+                    title: __("Item Group Values"),
+                    data: data,
+                    type: 'bar',
+                    height: 300,
+                    colors: ['#5d78ff'],
+                });
+            }
+        });
+    });
+}
 
 
 
-<div class="container mt-3">
-    <div class="row">
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <div class="card-header">
-                    <span>Featured</span>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Khobar</span>
-                        <span>Khobar</span>
-                    </li>
-                    <li class="list-group-item">A second item</li>
-                    <li class="list-group-item">A third item</li>
-                </ul>
-                <div class="card-body">
-                    <a href="#" class="card-link">Refresh</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
+
+
+
+
+
+
+
+from chatgpt
+
+import frappe from 'frappe';
+import { Chart } from 'frappe-charts';
+
+frappe.pages['learning-chart-page'].on_page_load = function(wrapper) {
+    var page = frappe.ui.make_app_page({
+        parent: wrapper,
+        title: __('Item Group Values'),
+        single_column: true
+    });
+
+    var chart_wrapper = $(`<div class="chart-wrapper" style="height: 300px;"></div>`).appendTo(page.main);
+
+    frappe.call({
+        method: "bismi.bismi.page.learning_page.learning_page.get_item_group_values",
+        callback: function (r) {
+            var item_group_values = r.message;
+            var labels = [], values = [];
+
+            $.each(item_group_values, function (i, item_group) {
+                labels.push(item_group.item_group);
+                values.push(item_group.value);
+            });
+
+            var chart_data = {
+                labels: labels,
+                datasets: [
+                    {
+                        name: __("Values"),
+                        values: values
+                    }
+                ]
+            };
+
+            var chart = new Chart("#" + chart_wrapper.attr("id"), {
+                title: __("Item Group Values"),
+                data: chart_data,
+                type: 'bar',
+                height: 300,
+                colors: ['#5d78ff'],
+            });
+        }
+    });
+}
