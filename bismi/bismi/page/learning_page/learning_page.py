@@ -103,6 +103,59 @@ def get_data():
     return {
         "data": data,
         "type": "bar",
-        "colors": ["#009933", "#ff9933", "#0000ff"],
+        "colors": ["#F683AE", "#2490ef", "#2F9D58"],
+        "height": 300
+    }
+
+
+@frappe.whitelist()
+def get_data_salesman():
+    data = {
+        "labels": [],
+        "datasets": [
+            {
+                "name": ("Total Sales"),
+                "values": []
+            },
+            {
+                "name": ("Total Cost"),
+                "values": []
+            },
+            {
+                "name": ("Total Profit"),
+                "values": []
+            }
+        ]
+    }
+    # branches = frappe.get_all("Sales Invoice",  group_by="branch")
+    branches = frappe.db.get_list("Sales Invoice", fields=["branch"], group_by="branch")
+
+    for branch in branches:
+        branch_name = branch.get("branch")
+        sales_data = frappe.db.sql("""
+        SELECT
+            CONCAT(sit.sales_person, '-', left(MONTHNAME(posting_date),3)) AS Branch_Year_Month,
+            SUM(base_net_total) AS total_sales,
+            sum(sii.qty*sii.incoming_rate) as total_cost,
+            SUM(base_net_total)-sum(sii.qty*sii.incoming_rate) as total_profit
+            FROM `tabSales Invoice` si   
+            JOIN `tabSales Invoice Item` sii ON si.name = sii.parent 
+            join `tabSales Team` sit on si.name = sit.parent
+            WHERE si.docstatus = 1 
+            GROUP BY YEAR(posting_date), MONTH(posting_date),sit.sales_person
+        """,  as_dict=True)
+
+        for row in sales_data:
+            year_month = "{}".format(row.Branch_Year_Month)
+            if year_month not in data["labels"]:
+                data["labels"].append(year_month)
+
+            for dataset in data["datasets"]:
+                dataset["values"].append(row[dataset["name"].lower().replace(" ", "_")])
+
+    return {
+        "data": data,
+        "type": "bar",
+        "colors": ["#F683AE", "#2490ef", "#2F9D58"],
         "height": 300
     }

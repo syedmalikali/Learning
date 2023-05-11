@@ -8,8 +8,17 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 
 	wrapper = $(wrapper).find('.layout-main-section');
 	wrapper.append(`
-					<div id="my_chart"></div>
-					<div id="my_schart"></div>
+	<div class="row">
+  <div class="col-md-6">
+  <div id="my_chart"></div>
+  </div>
+  <div class="col-md-6">
+  <div id="my_schart"></div>
+  </div>
+</div>
+					
+					
+					<div id="my_smanchart"></div>
 			`);
 	frappe.call({
 		method: "bismi.bismi.page.learning_page.learning_page.get_item_group_values",
@@ -52,11 +61,12 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 			//setTimeout(function () { my_chart.refresh()}, 1);
 		}
 	});
+	// Gross Profit Report By Branch
 	frappe.call({
 		method: "bismi.bismi.page.learning_page.learning_page.get_data",
 		callback: function (r) {
 			let chart = new frappe.Chart("#my_schart", { // or DOM element
-				title: "Branch Sales",
+				title: "Gross Profit Report By Branch",
                 data: r.message.data,
                 type: r.message.type,
                 colors: r.message.colors,
@@ -66,17 +76,42 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
                     spaceRatio: 0.5
                 },
                 tooltipOptions: {
-                    formatTooltipX: d => moment(d, "YYYY-MM").format("MMM YYYY"),
+                    formatTooltipX: d => (d + '').toUpperCase(),
                     formatTooltipY: d => format_currency(d)
                 },
-                format_tooltip_x: d => moment(d, "YYYY-MM").format("MMM YYYY"),
+                format_tooltip_x: d => (d + '').toUpperCase(),
                 format_y: d => format_currency(d)
             });
-			console.log(r.message.data)
+			
 		
 		}
     });
 
+	// Gross Profit Report By Salesman
+	frappe.call({
+		method: "bismi.bismi.page.learning_page.learning_page.get_data_salesman",
+		callback: function (r) {
+			let chart = new frappe.Chart("#my_smanchart", { // or DOM element
+				title: "Gross Profit Report By  Salesman",
+                data: r.message.data,
+                type: r.message.type,
+                colors: r.message.colors,
+                height: r.message.height,
+                barOptions: {
+                    stacked: true,
+                    spaceRatio: 0.5
+                },
+                tooltipOptions: {
+                    formatTooltipX: d => (d + '').toUpperCase(),
+                    formatTooltipY: d => format_currency(d)
+                },
+                format_tooltip_x: d => (d + '').toUpperCase(),
+                format_y: d => format_currency(d)
+            });
+			
+		
+		}
+    });
 
 	
 
