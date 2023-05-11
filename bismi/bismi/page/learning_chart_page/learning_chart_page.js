@@ -9,6 +9,7 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 	wrapper = $(wrapper).find('.layout-main-section');
 	wrapper.append(`
 					<div id="my_chart"></div>
+					<div id="my_schart"></div>
 			`);
 	frappe.call({
 		method: "bismi.bismi.page.learning_page.learning_page.get_item_group_values",
@@ -19,8 +20,9 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 			$.each(item_group_values, function (i, item_group) {
 				labels.push(item_group.item_group);
 				values.push(item_group.value);
+				values.push(item_group.qty);
 			});
-			
+			console.log(values);
 			var chart_data = {
 				labels: labels,
 				datasets: [
@@ -50,4 +52,32 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
 			//setTimeout(function () { my_chart.refresh()}, 1);
 		}
 	});
+	frappe.call({
+		method: "bismi.bismi.page.learning_page.learning_page.get_data",
+		callback: function (r) {
+			let chart = new frappe.Chart("#my_schart", { // or DOM element
+				title: "Branch Sales",
+                data: r.message.data,
+                type: r.message.type,
+                colors: r.message.colors,
+                height: r.message.height,
+                barOptions: {
+                    stacked: true,
+                    spaceRatio: 0.5
+                },
+                tooltipOptions: {
+                    formatTooltipX: d => moment(d, "YYYY-MM").format("MMM YYYY"),
+                    formatTooltipY: d => format_currency(d)
+                },
+                format_tooltip_x: d => moment(d, "YYYY-MM").format("MMM YYYY"),
+                format_y: d => format_currency(d)
+            });
+			console.log(r.message.data)
+		
+		}
+    });
+
+
+	
+
 }
