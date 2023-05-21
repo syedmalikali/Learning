@@ -71,9 +71,11 @@ frappe.pages['learning-chart-page'].on_page_load = function (wrapper) {
                 type: r.message.type,
                 colors: r.message.colors,
                 height: r.message.height,
+				// type:"pie",
                 barOptions: {
+					
                     stacked: true,
-                    spaceRatio: 0.5
+                    // spaceRatio: 0.5
                 },
                 tooltipOptions: {
                     formatTooltipX: d => (d + '').toUpperCase(),

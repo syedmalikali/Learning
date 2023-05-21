@@ -11,6 +11,7 @@ frappe.pages['l2'].on_page_load = function(wrapper) {
 			this.make()
 		},
 		make: function () {
+
 			//Current Month Sales Start
 			let current_month_sales = function () {
 				frappe.call({
